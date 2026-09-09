@@ -1,0 +1,23 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+coverage
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local tool output
+tsc-out.txt
+build-out.txt
+test-out.txt
+smoke-out.txt
+test-report.json
+backend/pip-out.txt
+backend/openapi.json

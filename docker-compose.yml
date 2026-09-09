@@ -1,0 +1,87 @@
+name: bhoomilens
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_DATA_SOURCE: ${VITE_DATA_SOURCE:-mock}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+        VITE_DATA_SCALE: ${VITE_DATA_SCALE:-standard}
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      BHOOMILENS_ENV: ${BHOOMILENS_ENV:-development}
+      BHOOMILENS_SECRET_KEY: ${BHOOMILENS_SECRET_KEY:-bhoomilens-development-secret-key-change-me}
+      BHOOMILENS_DATA_SEED: ${BHOOMILENS_DATA_SEED:-20260909}
+      BHOOMILENS_DATA_SCALE: ${BHOOMILENS_DATA_SCALE:-standard}
+      BHOOMILENS_CORS_ORIGINS: http://localhost:5173,http://localhost:4173
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------- #
+  # Reference infrastructure for the production topology. The prototype runs #
+  # without them; they are provided so the architecture can be exercised.    #
+  # ----------------------------------------------------------------------- #
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bhoomilens}
+      POSTGRES_USER: ${POSTGRES_USER:-bhoomilens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bhoomilens}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  neo4j:
+    image: neo4j:5-community
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-change-me-please}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4jdata:/data
+
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-bhoomilens}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-please}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+  neo4jdata:
+  miniodata:

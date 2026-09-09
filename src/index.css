@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: #102a43;
+    --ink-deep: #071a2b;
+    --paper: #f6f1e8;
+    --surface: #fffdf8;
+    --sand: #d8c4a5;
+    --teal: #168a8a;
+    --olive: #718355;
+    --signal-red: #d95d39;
+    --signal-amber: #d99b32;
+    --signal-green: #32866b;
+    --signal-blue: #3978a8;
+    --line: #c9bda9;
+    --muted: #66788a;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 14px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    font-variation-settings: 'SOFT' 0, 'WONK' 0;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d3c8b6;
+    border-radius: 999px;
+    border: 2px solid var(--paper);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #bcae97;
+  }
+}
+
+@layer components {
+  /* Cadastral paper surface used by cards and document panels. */
+  .surface-card {
+    @apply bg-surface border border-line/70 rounded-md shadow-card;
+  }
+
+  .cadastral-grid {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(rgba(201, 189, 169, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201, 189, 169, 0.35) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .paper-texture {
+    background-image: radial-gradient(rgba(201, 189, 169, 0.25) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  .metric {
+    @apply font-mono tabular-nums;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium text-paper/80
+      transition-colors hover:bg-white/10 hover:text-white;
+  }
+
+  .nav-link-active {
+    @apply bg-teal/25 text-white ring-1 ring-inset ring-teal/60;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md border text-[13px] font-semibold
+      transition-colors disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5;
+  }
+  .btn-primary {
+    @apply btn bg-ink text-paper border-ink hover:bg-ink-deep;
+  }
+  .btn-secondary {
+    @apply btn bg-surface text-ink border-line hover:bg-paper;
+  }
+  .btn-teal {
+    @apply btn bg-teal text-white border-teal hover:brightness-110;
+  }
+  .btn-danger {
+    @apply btn bg-signal-red text-white border-signal-red hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-ink border-transparent hover:bg-ink/5;
+  }
+
+  .field {
+    @apply w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink
+      placeholder:text-muted/70 focus:border-teal focus:outline-none;
+  }
+
+  .table-cell {
+    @apply px-3 py-2 text-[13px] align-middle;
+  }
+
+  .th-cell {
+    @apply px-3 py-2 text-left text-2xs font-semibold uppercase tracking-wide text-muted;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded bg-line/40;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-2xs font-semibold;
+  }
+}
+
+@layer utilities {
+  .scroll-thin {
+    scrollbar-width: thin;
+  }
+  .no-print {
+    @media print {
+      display: none !important;
+    }
+  }
+  .print-only {
+    display: none;
+    @media print {
+      display: block;
+    }
+  }
+}
+
+/* Leaflet overrides so map chrome matches the cadastral design system. */
+.leaflet-container {
+  background: #f2ece1;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 28px rgba(7, 26, 43, 0.18);
+}
+.leaflet-bar a {
+  color: var(--ink);
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .surface-card {
+    box-shadow: none;
+  }
+}

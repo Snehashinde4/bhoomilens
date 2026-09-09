@@ -1,0 +1,10 @@
+# Minimum versions rather than exact pins so the API installs cleanly on
+# Python 3.11 through 3.14. The Docker image pins Python 3.12 for reproducibility.
+fastapi>=0.115
+uvicorn[standard]>=0.34
+pydantic>=2.11
+pydantic-settings>=2.7
+PyJWT>=2.10
+python-multipart>=0.0.20
+httpx>=0.28
+pytest>=8.3

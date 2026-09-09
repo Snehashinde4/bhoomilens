@@ -1,0 +1,96 @@
+The one-sentence version
+BhoomiLens turns fragmented, multilingual, often handwritten land records into a connected intelligence system that tells administrators which land acquisition projects will be delayed, why, and what specific action will fix it — with every prediction explained and every decision audited.
+
+1. The problem
+India's infrastructure projects stall on land, not on engineering. The instinctive diagnosis is "bureaucratic delay", and that diagnosis produces useless interventions — more review meetings, more status reports, more pressure on officers who aren't the bottleneck.
+
+The real causes are structural and invisible:
+
+Records are split across four systems — the Record of Rights, the mutation register, the sub-registrar's index, and the cadastral map. Different offices, different cycles, different scripts. They disagree more often than anyone admits.
+Disagreements surface too late. A mismatch between recorded area and surveyed area costs almost nothing to fix at survey stage, and is ruinous after an award is declared and a claimant goes to court.
+Nobody can attribute the delay. A project is "delayed" — but is it compensation verification, litigation, or forty mutation registers that were never digitised? Without that answer, you can't intervene.
+So the actual problem isn't "we need to scan documents". It's:
+
+The state can't see the causal structure of its own land records, so it intervenes late and generically instead of early and specifically.
+
+2. The core idea
+Digitisation is worthless unless it terminates in a decision.
+
+An OCR pipeline that produces a searchable archive has moved paper into a database and changed nothing. Value appears only when extracted text is reconciled against other sources, placed on a map, attached to a project, converted into a risk signal, and put in front of an officer with a named action and an accountable office.
+
+That's why the product is a causal chain, and every module is one link:
+
+
+3. The story it tells (this is your demo)
+Four identifiers thread through all 24 screens — this is what makes it a product rather than a slide deck:
+
+PRJ-0001	NH-48 Expansion Package 3 — Jaipur, Rajasthan. 4,820 ha proposed, 2,418 affected families. Risk 78/100, HIGH
+DOC-000001	Mutation Register — Hindi, handwritten, 4 pages
+BL-184	Survey 184/2A, Khata KH-441, Ram Lal Meena. 2.48 ha recorded vs 2.09 ha surveyed
+MUT-441	One mutation number reused across two khasra numbers
+The 90-second walkthrough:
+
+National dashboard → filter to Rajasthan → NH-48 surfaces in the intervention queue at risk 78
+Open it → the waterfall shows why: compensation 36% undisbursed contributes 11.3 points, 18 legal cases contribute 17.3, approval aging contributes 9.5
+Drag the What-if sliders → raise compensation completion and verification capacity → score drops, completion date moves earlier
+Open the linked Mutation Register → click the owner-name field at 61.2% confidence → the region highlights on the scan → OCR reads "Ram Lai Meena", LRMS holds "Ram Lal Meena"
+Correct it → written to the audit trail with your name, role, old value, new value, timestamp
+Re-run validation → the rule engine re-executes and reports the new conflict counts
+Open the parcel's Digital Twin → the 15.7% area deviation is a blocking conflict
+See it on the GIS map, check the watershed evidence, create an intervention, export the report
+Every step feeds the next. The 15.7% discrepancy on one parcel becomes a validation conflict, becomes a contributor to a project risk score, becomes a recommended re-survey, becomes an audited intervention. That's the product.
+
+4. What's inside
+24 working modules, five groups:
+
+Group	Modules
+Command	Overview (18 KPIs, 10 charts) · Acquisition Monitor (11-stage lifecycle, Kanban, Gantt with critical path) · Projects · Project Detail (13 tabs) · Risk Intelligence · Scenario Simulator
+Records	Digitization Studio · Document Workspace (3-column reviewer) · Validation Workspace · Land Digital Twins · Ownership Graph · Time Machine
+Intelligence	Fraud Intelligence · GIS Explorer (16 layers) · Watershed Insights · Research Hub
+Delivery	Compensation & R&R · Review Queue · Citizen Services · Reports (14 reports)
+Platform	Data Integrations · Governance · Audit Logs · Settings
+5. The three differentiators
+🎯 National Scenario Simulator — Ten administrative levers with declared elasticities. Move the compensation team from 5 → 10 officers, cut pending cases 50% → watch portfolio delay risk and the high/critical project count both drop, with a narrative panel explaining the mechanism.
+
+🤖 LandGPT — A copilot that is permission-aware and cannot invent. It separates facts from records from model estimates in visually distinct blocks, cites clickable source records, and states its calculation. Ask it about compensation as a Citizen and it refuses — and there's a test asserting that.
+
+⏳ Administrative Time Machine — Drag 2018 → 2026 and watch ownership, mutations, acquisition progress, compensation status and vegetation indices reconstruct year by year.
+
+6. How it's built
+
+The single most important decision: every screen reads through one function, services/api.ts. No component embeds a data array. In mock mode it queries the in-browser engine; in API mode it calls FastAPI and falls back automatically if the backend is down.
+
+That one seam buys you: real data can replace seed data with zero UI changes; the demo can't break in front of judges; and swapping in PostGIS is a change in one module.
+
+The synthetic data engine is deterministic (seeded mulberry32 PRNG) — the same seed always produces the same dataset. Scales from 400 projects up to 1,500 projects / 100k parcels / 50k documents / 50k beneficiaries, switchable at runtime.
+
+The risk model is a transparent weighted-factor model, not a black box. Ten named factors with declared weights (22, 19, 14, 12, 10, 9, 8, 6, 6, 4). This is a deliberate accuracy trade — a gradient-boosted model would score better and be unusable, because the output isn't a prediction, it's an argument an officer must defend to an auditor.
+
+7. Why it's credible (this is what wins evaluations)
+Discipline	How it's enforced
+Explainability	Every score decomposes into named contributions with plain-English explanations
+Human authority	The machine proposes; a named officer disposes. Nothing legally significant auto-approves
+Evidence preserved	Original script kept verbatim, never overwritten — corrections append
+Honest language	"Potential anomaly", never fraud. Backed by an automated test
+Labelled predictions	Disclaimer on every score, export, API response and chart — because figures travel
+RBAC in 3 layers	Route + action + the AI's answers — the layer most systems forget
+Privacy by construction	Bank accounts tokenised, identity hashed, citizen names masked. Not a policy — a schema that can't hold the value
+Immutable audit	audit_events rejects UPDATE/DELETE via a database trigger, not app convention
+8. Numbers you can quote
+24 modules, all functional — no placeholder pages
+14 roles, 32 permissions, enforced at three layers
+15 chart types — including a custom Gantt with critical path and a force-directed knowledge graph
+12 validation categories, 15 anomaly categories, 16 GIS layers, 11 Indian languages
+73 tests passing — 55 frontend, 18 backend API
+Full stack — React SPA + FastAPI + PostGIS schema + Docker + CI/CD, all green
+9. What's real vs simulated — be upfront about this
+Real: the entire application, the risk model, the validation rule engine, the RBAC, the audit trail, the GIS geometry maths, the API, the database schema, the tests, the CI/CD.
+
+Simulated: the data. Every name, parcel, coordinate and figure is generated. There's no live OCR engine and no live government API connection — the integration adapters are mocked behind honest interfaces, and the Integrations page says so.
+
+Leading with this is a strength, not a weakness. Evaluators have seen many demos that quietly imply live government connectivity. Saying plainly "the architecture is real, the data is synthetic, here's exactly where the seam is" is far more convincing than being caught.
+
+10. The standard it's built against
+Not adoption. Not documents processed. Not model accuracy.
+
+A District Collector opens it on a Monday, learns something about a project they didn't already know, understands why it's true, can trace it to the specific records that make it true, acts on it — and six months later that project isn't in the intervention queue.

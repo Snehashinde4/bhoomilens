@@ -31,6 +31,15 @@ Every screen shares the same identifiers, so the demonstration never breaks:
 | Document | `DOC-000001` — Mutation Register (Hindi, handwritten, 4 pages) |
 | Mutation | `MUT-441` — reused across two khasra numbers (potential anomaly) |
 
+### Documentation
+
+| Document | Covers |
+| --- | --- |
+| [`docs/IDEOLOGY.md`](docs/IDEOLOGY.md) | **Why the product is shaped this way** — the problem, the ten principles, and what it refuses to do |
+| [`docs/API.md`](docs/API.md) | Endpoint reference, conventions, worked examples |
+| [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | Twenty-four step walkthrough of the connected story |
+| This file | Architecture, modules, data model, deployment |
+
 ---
 
 ## 2. Quick start
